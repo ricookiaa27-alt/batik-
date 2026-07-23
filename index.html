@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Batik Kediri × Jogja 3D</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+</head>
+
+<body>
+
+    <!-- Loading -->
+
+    <div id="loadingScreen">
+
+        <div class="loader"></div>
+
+        <h2>Memuat Model Batik...</h2>
+
+        <p id="progressText">0%</p>
+
+    </div>
+
+
+    <!-- Viewer -->
+
+    <div id="viewer"></div>
+
+
+    <!-- Logo -->
+
+    <div class="logo">
+
+        <h1>
+            BATIK KEDIRI × JOGJA
+        </h1>
+
+    </div>
+
+
+    <!-- Menu -->
+
+    <div class="toolbar">
+
+        <button id="frontBtn">
+            Depan
+        </button>
+
+        <button id="backBtn">
+            Belakang
+        </button>
+
+        <button id="resetBtn">
+            Reset
+        </button>
+
+        <button id="rotateBtn">
+            Auto Rotate
+        </button>
+
+        <button id="fullscreenBtn">
+            Fullscreen
+        </button>
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <div class="footer">
+
+        <p>
+
+            © 2026
+            Batik Kediri × Jogja
+
+        </p>
+
+    </div>
+
+
+    <!-- Three.js -->
+
+    <script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.181.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.181.0/examples/jsm/"
+    }
+}
+</script>
+
+    <script
+        type="module"
+        src="script.js">
+    </script>
+
+</body>
+
+</html>
