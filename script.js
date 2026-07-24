@@ -207,6 +207,13 @@ obj.receiveShadow = true;
 });
 
 scene.add(shirt);
+  const box = new THREE.Box3().setFromObject(shirt);
+
+console.log(box);
+
+const helper = new THREE.Box3Helper(box, 0xff0000);
+
+scene.add(helper);
 
 loadingScreen.style.display="none";
 
