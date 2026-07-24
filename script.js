@@ -10,6 +10,9 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
+console.log("Script berjalan");
+alert("Script berjalan");
+
 
 // --------------------------------------
 // ELEMENT
@@ -45,7 +48,7 @@ window.innerWidth / window.innerHeight,
 
 );
 
-camera.position.set(0, 1.4, 4);
+camera.position.set(0, 2, 8);
 
 // --------------------------------------
 // RENDERER
@@ -189,7 +192,7 @@ shirt = gltf.scene;
 
 shirt.position.set(0,0,0);
 
-shirt.scale.set(1.25,1.25,1.25);
+shirt.scale.set(10,10,10);
 
 shirt.traverse((obj)=>{
 
