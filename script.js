@@ -207,14 +207,11 @@ obj.receiveShadow = true;
 });
 
 scene.add(shirt);
-  const box = new THREE.Box3().setFromObject(shirt);
+  console.log("Model berhasil dimuat");
+console.log(shirt);
 
-console.log(box);
-
-const helper = new THREE.Box3Helper(box, 0xff0000);
-
-scene.add(helper);
-
+const box = new THREE.Box3().setFromObject(shirt);
+console.log("Ukuran model:", box);
 loadingScreen.style.display="none";
 
 },
