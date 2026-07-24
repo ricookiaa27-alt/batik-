@@ -170,21 +170,7 @@ scene.add(floor);
 // HDR ENVIRONMENT
 // --------------------------------------
 
-new RGBELoader()
 
-.load(
-
-"assets/studio.hdr",
-
-(texture)=>{
-
-texture.mapping = THREE.EquirectangularReflectionMapping;
-
-scene.environment = texture;
-
-}
-
-);
 
 // --------------------------------------
 // MODEL
