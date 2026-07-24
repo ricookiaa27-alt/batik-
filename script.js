@@ -10,9 +10,6 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-console.log("Script berjalan");
-alert("Script berjalan");
-
 
 // --------------------------------------
 // ELEMENT
@@ -94,16 +91,17 @@ controls.enableDamping = true;
 
 controls.dampingFactor = 0.08;
 
-controls.target.set(0, 1.2, 0);
+controls.target.set(0, 0, 0);
 
 controls.autoRotate = false;
 
 controls.autoRotateSpeed = 1.5;
 
-controls.minDistance = 2.2;
+controls.enablePan = false;
 
-controls.maxDistance = 7;
+controls.minDistance = 0.5;
 
+controls.maxDistance = 10;
 // --------------------------------------
 // LIGHT
 // --------------------------------------
@@ -184,108 +182,111 @@ const loader = new GLTFLoader();
 
 loader.load(
 
-"assets/batik_men_shirt.glb",
+    "assets/batik_men_shirt.glb",
 
-(gltf)=>{
+    (gltf) => {
 
-shirt = gltf.scene;
+        shirt = gltf.scene;
 
-shirt.position.set(0,0,0);
+        // Shadow
+        shirt.traverse((obj) => {
 
-shirt.scale.set(10,10,10);
+            if (obj.isMesh) {
 
-shirt.traverse((obj)=>{
+                obj.castShadow = true;
+                obj.receiveShadow = true;
 
-if(obj.isMesh){
+            }
 
-obj.castShadow = true;
+        });
 
-obj.receiveShadow = true;
+        // ===========================
+        // AUTO CENTER
+        // ===========================
 
-}
+        const box = new THREE.Box3().setFromObject(shirt);
 
-});
+        const size = box.getSize(new THREE.Vector3());
 
-scene.add(shirt);
-  console.log("Model berhasil dimuat");
-console.log(shirt);
+        const center = box.getCenter(new THREE.Vector3());
 
-const box = new THREE.Box3().setFromObject(shirt);
-console.log("Ukuran model:", box);
-loadingScreen.style.display="none";
+        shirt.position.sub(center);
 
-},
+        // ===========================
+        // AUTO SCALE
+        // ===========================
 
-(xhr)=>{
+        const maxSize = Math.max(size.x, size.y, size.z);
 
-let percent =
+        const targetSize = 2;
 
-(xhr.loaded/xhr.total)*100;
+        const scale = targetSize / maxSize;
 
-progressText.innerHTML=
+        shirt.scale.setScalar(scale);
 
-Math.round(percent)+"%";
+        // Hitung ulang setelah di-scale
 
-},
+        const newBox = new THREE.Box3().setFromObject(shirt);
 
-(error)=>{
+        const newCenter = newBox.getCenter(new THREE.Vector3());
 
-console.error(error);
+        shirt.position.sub(newCenter);
 
-alert("Model gagal dimuat.");
+        scene.add(shirt);
 
-}
+        // ===========================
+        // CAMERA FIT
+        // ===========================
+
+        const finalBox = new THREE.Box3().setFromObject(shirt);
+
+        const finalSize = finalBox.getSize(new THREE.Vector3());
+
+        const radius = Math.max(
+            finalSize.x,
+            finalSize.y,
+            finalSize.z
+        );
+
+        camera.position.set(
+            radius * 0.8,
+            radius * 0.6,
+            radius * 2.4
+        );
+
+        controls.target.set(0, 0, 0);
+
+        controls.update();
+
+        // Floor mengikuti model
+
+        floor.position.y = finalBox.min.y - 0.01;
+
+        loadingScreen.style.display = "none";
+
+        console.log("Model berhasil dimuat");
+
+        console.log(finalBox);
+
+    },
+
+    (xhr) => {
+
+        if (xhr.total) {
+
+            progressText.innerHTML =
+                Math.round((xhr.loaded / xhr.total) * 100) + "%";
+
+        }
+
+    },
+
+    (error) => {
+
+        console.error(error);
+
+        alert("Model gagal dimuat");
+
+    }
 
 );
-
-// --------------------------------------
-// RESIZE
-// --------------------------------------
-
-window.addEventListener(
-
-"resize",
-
-()=>{
-
-camera.aspect=
-
-window.innerWidth/
-
-window.innerHeight;
-
-camera.updateProjectionMatrix();
-
-renderer.setSize(
-
-window.innerWidth,
-
-window.innerHeight
-
-);
-
-}
-
-);
-
-// --------------------------------------
-// ANIMATION
-// --------------------------------------
-
-function animate(){
-
-requestAnimationFrame(animate);
-
-controls.update();
-
-renderer.render(
-
-scene,
-
-camera
-
-);
-
-}
-
-animate();
