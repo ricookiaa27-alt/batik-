@@ -186,20 +186,58 @@ loader.load(
 
     (gltf) => {
 
-        shirt = gltf.scene;
+    shirt = gltf.scene;
 
-        // Shadow
-        shirt.traverse((obj) => {
+    shirt.updateMatrixWorld(true);
 
-            if (obj.isMesh) {
+    // Hitung bounding box
+    const box = new THREE.Box3().setFromObject(shirt);
 
-                obj.castShadow = true;
-                obj.receiveShadow = true;
+    const center = box.getCenter(new THREE.Vector3());
 
-            }
+    const size = box.getSize(new THREE.Vector3());
 
-        });
+    // Geser model ke origin
+    shirt.position.set(
+        -center.x,
+        -center.y,
+        -center.z
+    );
 
+    scene.add(shirt);
+
+    // Hitung ulang setelah dipindah
+    const box2 = new THREE.Box3().setFromObject(shirt);
+
+    const size2 = box2.getSize(new THREE.Vector3());
+
+    const maxDim = Math.max(size2.x, size2.y, size2.z);
+
+    const scale = 2 / maxDim;
+
+    shirt.scale.setScalar(scale);
+
+    shirt.updateMatrixWorld(true);
+
+    // Hitung ulang lagi setelah scale
+    const box3 = new THREE.Box3().setFromObject(shirt);
+
+    const center3 = box3.getCenter(new THREE.Vector3());
+
+    controls.target.copy(center3);
+
+    camera.position.set(
+        center3.x,
+        center3.y + maxDim * scale * 0.4,
+        center3.z + maxDim * scale * 2
+    );
+
+    camera.lookAt(center3);
+
+    controls.update();
+
+    loadingScreen.style.display = "none";
+    }
         // ===========================
         // AUTO CENTER
         // ===========================
