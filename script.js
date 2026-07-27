@@ -186,125 +186,82 @@ loader.load(
 
     (gltf) => {
 
-    shirt = gltf.scene;
+        shirt = gltf.scene;
 
-    shirt.updateMatrixWorld(true);
+        shirt.traverse((obj) => {
 
-    // Hitung bounding box
-    const box = new THREE.Box3().setFromObject(shirt);
+            if (obj.isMesh) {
 
-    const center = box.getCenter(new THREE.Vector3());
+                obj.castShadow = true;
+                obj.receiveShadow = true;
 
-    const size = box.getSize(new THREE.Vector3());
+            }
 
-    // Geser model ke origin
-    shirt.position.set(
-        -center.x,
-        -center.y,
-        -center.z
-    );
+        });
 
-    scene.add(shirt);
+        scene.add(shirt);
 
-    // Hitung ulang setelah dipindah
-    const box2 = new THREE.Box3().setFromObject(shirt);
-
-    const size2 = box2.getSize(new THREE.Vector3());
-
-    const maxDim = Math.max(size2.x, size2.y, size2.z);
-
-    const scale = 2 / maxDim;
-
-    shirt.scale.setScalar(scale);
-
-    shirt.updateMatrixWorld(true);
-
-    // Hitung ulang lagi setelah scale
-    const box3 = new THREE.Box3().setFromObject(shirt);
-
-    const center3 = box3.getCenter(new THREE.Vector3());
-
-    controls.target.copy(center3);
-
-    camera.position.set(
-        center3.x,
-        center3.y + maxDim * scale * 0.4,
-        center3.z + maxDim * scale * 2
-    );
-
-    camera.lookAt(center3);
-
-    controls.update();
-
-    loadingScreen.style.display = "none";
-    
-        // ===========================
+        // ==========================
         // AUTO CENTER
-        // ===========================
+        // ==========================
 
         const box = new THREE.Box3().setFromObject(shirt);
 
-        const size = box.getSize(new THREE.Vector3());
-
         const center = box.getCenter(new THREE.Vector3());
 
-        shirt.position.sub(center);
+        const size = box.getSize(new THREE.Vector3());
 
-        // ===========================
+        shirt.position.x -= center.x;
+        shirt.position.y -= center.y;
+        shirt.position.z -= center.z;
+
+        // ==========================
         // AUTO SCALE
-        // ===========================
+        // ==========================
 
-        const maxSize = Math.max(size.x, size.y, size.z);
+        const maxDim = Math.max(size.x, size.y, size.z);
 
-        const targetSize = 2;
-
-        const scale = targetSize / maxSize;
+        const scale = 2 / maxDim;
 
         shirt.scale.setScalar(scale);
 
-        // Hitung ulang setelah di-scale
+        shirt.updateMatrixWorld(true);
+
+        // ==========================
+        // UPDATE BOUNDING BOX
+        // ==========================
 
         const newBox = new THREE.Box3().setFromObject(shirt);
 
         const newCenter = newBox.getCenter(new THREE.Vector3());
 
-        shirt.position.sub(newCenter);
-
-        scene.add(shirt);
-
-        // ===========================
-        // CAMERA FIT
-        // ===========================
-
-        const finalBox = new THREE.Box3().setFromObject(shirt);
-
-        const finalSize = finalBox.getSize(new THREE.Vector3());
+        const newSize = newBox.getSize(new THREE.Vector3());
 
         const radius = Math.max(
-            finalSize.x,
-            finalSize.y,
-            finalSize.z
+            newSize.x,
+            newSize.y,
+            newSize.z
         );
+
+        controls.target.copy(newCenter);
 
         camera.position.set(
-            radius * 0.8,
-            radius * 0.6,
-            radius * 2.4
+            newCenter.x,
+            newCenter.y + radius * 0.3,
+            newCenter.z + radius * 2.3
         );
 
-        controls.target.set(0, 0, 0);
+        camera.lookAt(newCenter);
 
         controls.update();
 
-        // Floor mengikuti model
-
-        floor.position.y = finalBox.min.y - 0.01;
+        floor.position.y = newBox.min.y - 0.01;
 
         loadingScreen.style.display = "none";
 
         console.log("Model berhasil dimuat");
 
-        console.log(finalBox);
+        console.log(newBox);
 
     },
 
@@ -326,5 +283,3 @@ loader.load(
         alert("Model gagal dimuat");
 
     }
-
-);
