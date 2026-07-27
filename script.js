@@ -283,3 +283,4 @@ loader.load(
         alert("Model gagal dimuat");
 
     }
+);
