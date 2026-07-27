@@ -199,6 +199,13 @@ loader.load(
         });
 
         scene.add(shirt);
+        
+        shirt.traverse((child) => {
+    if (child.isMesh) {
+        child.material.side = THREE.DoubleSide;
+        child.material.needsUpdate = true;
+    }
+});
 
         // ==========================
         // AUTO CENTER
@@ -244,7 +251,10 @@ loader.load(
 
         controls.target.copy(newCenter);
 
-        camera.position.set(
+        camera.position.set(0,0,5);
+        controls.target.set(0,0,0);
+        camera.lookAt(0,0,0);
+        controls.update();
             newCenter.x,
             newCenter.y + radius * 0.3,
             newCenter.z + radius * 2.3
