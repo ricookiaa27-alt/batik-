@@ -255,9 +255,7 @@ loader.load(
         controls.target.set(0,0,0);
         camera.lookAt(0,0,0);
         controls.update();
-            newCenter.x,
-            newCenter.y + radius * 0.3,
-            newCenter.z + radius * 2.3
+           
         );
 
         camera.lookAt(newCenter);
