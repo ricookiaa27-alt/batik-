@@ -237,7 +237,7 @@ loader.load(
     controls.update();
 
     loadingScreen.style.display = "none";
-    }
+    
         // ===========================
         // AUTO CENTER
         // ===========================
