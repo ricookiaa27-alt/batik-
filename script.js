@@ -240,28 +240,18 @@ loader.load(
         const newBox = new THREE.Box3().setFromObject(shirt);
 
         const newCenter = newBox.getCenter(new THREE.Vector3());
+const newSize = newBox.getSize(new THREE.Vector3());
 
-        const newSize = newBox.getSize(new THREE.Vector3());
+controls.target.copy(newCenter);
 
-        const radius = Math.max(
-            newSize.x,
-            newSize.y,
-            newSize.z
-        );
+camera.position.set(
+    newCenter.x,
+    newCenter.y,
+    newCenter.z + 5
+);
 
-        controls.target.copy(newCenter);
-
-        camera.position.set(0,0,5);
-        controls.target.set(0,0,0);
-        camera.lookAt(0,0,0);
-        controls.update();
-           
-        );
-
-        camera.lookAt(newCenter);
-
-        controls.update();
-
+camera.lookAt(newCenter);
+controls.update();
         floor.position.y = newBox.min.y - 0.01;
 
         loadingScreen.style.display = "none";
