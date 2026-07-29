@@ -172,6 +172,49 @@ loader.load(
 );
 
 // --------------------------------------
+// PATTERN (PNG BATIK) UPLOAD
+// --------------------------------------
+const patternInput = document.getElementById("patternInput");
+const textureLoader = new THREE.TextureLoader();
+
+function applyPatternToShirt(imageURL) {
+    if (!shirt) {
+        alert("Model belum selesai dimuat, tunggu sebentar lalu coba lagi.");
+        return;
+    }
+
+    textureLoader.load(imageURL, (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        // Supaya motif bisa berulang rapi di permukaan kain.
+        // Ubah nilai repeat.set(x, y) sesuai kebutuhan besar/kecil motif.
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(3, 3);
+        texture.flipY = false; // penting untuk model GLTF (UV sudah dari Blender/glTF)
+
+        shirt.traverse((child) => {
+            if (child.isMesh) {
+                child.material.map = texture;
+                child.material.needsUpdate = true;
+            }
+        });
+
+        console.log("Motif batik berhasil ditempel ke model.");
+    });
+}
+
+if (patternInput) {
+    patternInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        applyPatternToShirt(url);
+    });
+}
+
+// --------------------------------------
 // RESIZE HANDLER
 // --------------------------------------
 window.addEventListener("resize", () => {
