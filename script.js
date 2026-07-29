@@ -88,6 +88,8 @@ scene.add(floor);
 // MODEL
 // --------------------------------------
 let shirt;
+let modelCenter = new THREE.Vector3();
+const viewDistance = 5;
 const loader = new GLTFLoader();
 
 // Safety timeout: kalau loading lebih dari 20 detik, tampilkan pesan error
@@ -141,6 +143,7 @@ loader.load(
         // ==========================
         const newBox = new THREE.Box3().setFromObject(shirt);
         const newCenter = newBox.getCenter(new THREE.Vector3());
+        modelCenter.copy(newCenter);
 
         controls.target.copy(newCenter);
         camera.position.set(newCenter.x, newCenter.y, newCenter.z + 5);
@@ -211,6 +214,60 @@ if (patternInput) {
 
         const url = URL.createObjectURL(file);
         applyPatternToShirt(url);
+    });
+}
+
+// --------------------------------------
+// UI BUTTONS: DEPAN / BELAKANG / RESET / ROTATE / FULLSCREEN
+// --------------------------------------
+const frontBtn = document.getElementById("frontBtn");
+const backBtn = document.getElementById("backBtn");
+const resetBtn = document.getElementById("resetBtn");
+const rotateBtn = document.getElementById("rotateBtn");
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+function goToView(zOffset) {
+    if (!shirt) {
+        alert("Model belum selesai dimuat, tunggu sebentar ya.");
+        return;
+    }
+    camera.position.set(modelCenter.x, modelCenter.y, modelCenter.z + zOffset);
+    controls.target.copy(modelCenter);
+    camera.lookAt(modelCenter);
+    controls.update();
+}
+
+if (frontBtn) {
+    frontBtn.addEventListener("click", () => goToView(viewDistance));
+}
+
+if (backBtn) {
+    backBtn.addEventListener("click", () => goToView(-viewDistance));
+}
+
+if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+        controls.autoRotate = false;
+        goToView(viewDistance);
+    });
+}
+
+if (rotateBtn) {
+    rotateBtn.addEventListener("click", () => {
+        controls.autoRotate = !controls.autoRotate;
+        rotateBtn.classList.toggle("active", controls.autoRotate);
+    });
+}
+
+if (fullscreenBtn) {
+    fullscreenBtn.addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+            viewer.requestFullscreen().catch((err) => {
+                console.error("Gagal masuk fullscreen:", err);
+            });
+        } else {
+            document.exitFullscreen();
+        }
     });
 }
 
